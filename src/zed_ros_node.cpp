@@ -4,7 +4,8 @@ ZED_ROS_Node::ZED_ROS_Node():it_(nh_){
   // ros
   pub_left = it_.advertise("left_raw", 1);
   pub_right = it_.advertise("right_raw", 1);
-  pub_depth = it_.advertise("left_disp_float", 1);
+  pub_depth = it_.advertise("left_depth", 1);
+  pub_pc = nh_.advertise<sensor_msgs::PointCloud2>("points", 1);
   counter = 0;
 
   // ----> Create Video Capture
@@ -117,11 +118,44 @@ ZED_ROS_Node::ZED_ROS_Node():it_(nh_){
 
       left_disp_half.convertTo(left_disp_float,CV_32FC1);
       cv::multiply(left_disp_float,1./16.,left_disp_float); // Last 4 bits of SGBM disparity are decimal
-      left_disp = left_disp_float;
+
+
+      // // visualization
+      cv::add(left_disp_float,-static_cast<double>(stereoPar.minDisparity-1),left_disp_float); // Minimum disparity offset correction
+      cv::multiply(left_disp_float,1./stereoPar.numDisparities,left_disp_image,255., CV_8UC1 ); // Normalization and rescaling
 
       elapsed = stereo_clock.toc();
       stereoElabInfo << "Stereo processing: " << elapsed << " sec - Freq: " << 1./elapsed;
       // <---- Stereo matching
+
+      // ----> Extract Depth map
+      // The DISPARITY MAP can be now transformed in DEPTH MAP using the formula
+      // depth = (f * B) / disparity
+      // where 'f' is the camera focal, 'B' is the camera baseline, 'disparity' is the pixel disparity
+      num = static_cast<double>(fx*baseline);
+      cv::divide(num,left_disp_float,left_depth_map);
+      // <---- Extract Depth map
+
+      // ----> Create Point Cloud
+      pcl::PointCloud<pcl::PointXYZ>::Ptr cloud (new pcl::PointCloud<pcl::PointXYZ>);
+      size_t buf_size = static_cast<size_t>(left_depth_map.cols * left_depth_map.rows);
+      for(size_t idx=0; idx<buf_size;idx++ ){
+        size_t r = idx/left_depth_map.cols;
+        size_t c = idx%left_depth_map.cols;
+        double depth = left_depth_map.data[idx]; //mm
+        if(!isinf(depth) && depth >=0 )
+        {
+            pcl::PointXYZ pt;
+            pt.z = depth; // Z
+            pt.x = (c-cx)*depth/fx; // X
+            pt.y = (r-cy)*depth/fy; // Y
+            cloud->push_back(pt);
+        }
+      }
+
+
+
+
 
 
 
@@ -129,8 +163,14 @@ ZED_ROS_Node::ZED_ROS_Node():it_(nh_){
 
       header.seq = counter; // user defined counter
       header.stamp = ros::Time::now(); // time
+      header.frame_id = "zed_mini";
 
-      img_bridge = cv_bridge::CvImage(header, sensor_msgs::image_encodings::TYPE_32FC1 , left_disp_float);
+      sensor_msgs::PointCloud2 ros_points;
+      toROSMsg(*cloud, ros_points);
+      ros_points.header= header;
+      pub_pc.publish(ros_points);
+
+      img_bridge = cv_bridge::CvImage(header, sensor_msgs::image_encodings::TYPE_8UC1 , left_disp_image);
       img_bridge.toImageMsg(img_msg); // from cv_bridge to sensor_msgs::Image
       pub_depth.publish(img_msg);
       img_bridge = cv_bridge::CvImage(header, sensor_msgs::image_encodings::RGB8 , left_raw);
