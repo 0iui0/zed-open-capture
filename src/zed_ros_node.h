@@ -12,6 +12,9 @@
 #include "videocapture.hpp"
 #include "sensorcapture.hpp"
 #include "ocv_display.hpp"
+#include "calibration.hpp"
+#include "stopwatch.hpp"
+#include "stereo.hpp"
 #include <iomanip>
 #include <opencv2/opencv.hpp>
 
@@ -82,12 +85,18 @@ public:
 private:
   NodeHandle nh_;
   image_transport::ImageTransport it_;
-  image_transport::Publisher pub_img;
-
+  image_transport::Publisher pub_left, pub_right, pub_depth;
   cv_bridge::CvImage img_bridge;
   sensor_msgs::Image img_msg; // >> message to be sent
   std_msgs::Header header; // empty header
-  uint64_t counter, lastFrameTs;
-  double now, elapsed_sec, lastTime;
-  cv::Mat frameYUV, frameBGR;
+  uint64_t counter, lastFrameTs, sn, serial_number;
+  int w, h;
+  double now, elapsed_sec, lastTime, baseline, fx, fy, cx, cy, remap_elapsed, resize_fact, elapsed;
+  std::string calibration_file;
+  cv::Mat frameYUV, frameBGR, left_raw, left_rect, right_raw, right_rect, left_for_matcher, right_for_matcher, left_disp_half,left_disp,left_disp_float, left_disp_vis;
+  cv::Mat map_left_x, map_left_y;
+  cv::Mat map_right_x, map_right_y;
+  cv::Mat cameraMatrix_left, cameraMatrix_right;
+  cv::Ptr<cv::StereoSGBM> left_matcher;
+  std::stringstream remapElabInfo, stereoElabInfo;
 };

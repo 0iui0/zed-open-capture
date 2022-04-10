@@ -147,6 +147,7 @@ install(TARGETS ${PROJECT_NAME}
 ############################################################################
 ############################################################################
 find_package(OpenCV REQUIRED)
+find_package(OpenMP)
 find_package(catkin REQUIRED COMPONENTS
   geometry_msgs
   nav_msgs
