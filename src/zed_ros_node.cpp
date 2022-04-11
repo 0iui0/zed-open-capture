@@ -132,7 +132,7 @@ ZED_ROS_Node::ZED_ROS_Node():it_(nh_){
       // <---- Extract Depth map
 
       // ----> Create Point Cloud
-      pcl::PointCloud<pcl::PointXYZ>::Ptr cloud (new pcl::PointCloud<pcl::PointXYZ>);
+      pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud (new pcl::PointCloud<pcl::PointXYZRGB>);
       size_t buf_size = static_cast<size_t>(left_depth_map.cols * left_depth_map.rows);
       for(size_t idx=0; idx<buf_size;idx++ ){
         size_t r = idx/left_depth_map.cols;
@@ -141,17 +141,27 @@ ZED_ROS_Node::ZED_ROS_Node():it_(nh_){
         // std::cout << depth << " ";
         if(!isinf(depth) && depth >0 && depth > stereoPar.minDepth_mm && depth < stereoPar.maxDepth_mm)
         {
-            pcl::PointXYZ pt;
-            // mm -> m, Z->X, X-> -Z, Y-> -Y
-            ushort Z = static_cast<ushort>(depth); // Z
-            ushort X = static_cast<ushort>((c-cx)*depth/fx); // X
-            ushort Y = static_cast<ushort>((r-cy)*depth/fy); // Y
+            pcl::PointXYZRGB pt;
 
-            pt.z = Z / 1000.;
-            pt.y = Y / 1000.;
+            ushort ZZ = static_cast<ushort>(depth); // Z
+            float Z = static_cast<float>(ZZ);
+            float X = (c-cx)*depth/fx; // X
+            float Y = (r-cy)*depth/fy; // Y
             pt.x = X / 1000.;
+            pt.y = Y / 1000.;
+            pt.z = Z / 1000.;
+
+            cv::Vec3b bgrPixel = left_raw.at<cv::Vec3b>(r, c);
+            pt.b = bgrPixel[0];
+            pt.g = bgrPixel[1];
+            pt.r = bgrPixel[2];
+
             cloud->push_back(pt);
-            if(c==640 && r==360) std::cout <<"Depth of the central pixel: "<< depth<< " (mm)"<<std::endl;
+            if(c==640 && r==360){
+              std::cout <<"Depth of the central pixel: "<< depth<< " (mm)"<<std::endl;
+              // std::cout<<"x="<< pt.x<<",y="<<pt.y<<",z="<<pt.z<<","<<std::endl;
+            }
+
         }
       }
 
