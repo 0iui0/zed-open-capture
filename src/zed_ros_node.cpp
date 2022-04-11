@@ -173,10 +173,10 @@ ZED_ROS_Node::ZED_ROS_Node():it_(nh_){
       img_bridge = cv_bridge::CvImage(header, sensor_msgs::image_encodings::TYPE_8UC1 , left_disp_image);
       img_bridge.toImageMsg(img_msg); // from cv_bridge to sensor_msgs::Image
       pub_depth.publish(img_msg);
-      img_bridge = cv_bridge::CvImage(header, sensor_msgs::image_encodings::RGB8 , left_raw);
+      img_bridge = cv_bridge::CvImage(header, sensor_msgs::image_encodings::BGR8 , left_raw);
       img_bridge.toImageMsg(img_msg); // from cv_bridge to sensor_msgs::Image
       pub_left.publish(img_msg);
-      img_bridge = cv_bridge::CvImage(header, sensor_msgs::image_encodings::RGB8 , right_raw);
+      img_bridge = cv_bridge::CvImage(header, sensor_msgs::image_encodings::BGR8 , right_raw);
       img_bridge.toImageMsg(img_msg); // from cv_bridge to sensor_msgs::Image
       pub_right.publish(img_msg);
     }
