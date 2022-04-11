@@ -114,15 +114,10 @@ ZED_ROS_Node::ZED_ROS_Node():it_(nh_){
       left_for_matcher = left_rect; // No data copy
       right_for_matcher = right_rect; // No data copy
       // Apply stereo matching
-      left_matcher->compute(left_for_matcher, right_for_matcher,left_disp_half);
-
-      left_disp_half.convertTo(left_disp_float,CV_32FC1);
+      left_matcher->compute(left_for_matcher, right_for_matcher,left_disp_half); //left_disp_half->CV_16UC1
+      left_disp_half.convertTo(left_disp_image, CV_8U, 255 / (stereoPar.numDisparities*16.)); //for RVIZ, left_disp_image ->CV_8UC1
+      left_disp_half.convertTo(left_disp_float,CV_16UC1);
       cv::multiply(left_disp_float,1./16.,left_disp_float); // Last 4 bits of SGBM disparity are decimal
-
-
-      // // visualization
-      cv::add(left_disp_float,-static_cast<double>(stereoPar.minDisparity-1),left_disp_float); // Minimum disparity offset correction
-      cv::multiply(left_disp_float,1./stereoPar.numDisparities,left_disp_image,255., CV_8UC1 ); // Normalization and rescaling
 
       elapsed = stereo_clock.toc();
       stereoElabInfo << "Stereo processing: " << elapsed << " sec - Freq: " << 1./elapsed;
@@ -142,14 +137,21 @@ ZED_ROS_Node::ZED_ROS_Node():it_(nh_){
       for(size_t idx=0; idx<buf_size;idx++ ){
         size_t r = idx/left_depth_map.cols;
         size_t c = idx%left_depth_map.cols;
-        double depth = left_depth_map.data[idx]; //mm
-        if(!isinf(depth) && depth >=0 )
+        ushort depth = left_depth_map.at<ushort>(r, c); //left_depth_map is CV_16U
+        // std::cout << depth << " ";
+        if(!isinf(depth) && depth >0 && depth > stereoPar.minDepth_mm && depth < stereoPar.maxDepth_mm)
         {
             pcl::PointXYZ pt;
-            pt.z = depth; // Z
-            pt.x = (c-cx)*depth/fx; // X
-            pt.y = (r-cy)*depth/fy; // Y
+            // mm -> m, Z->X, X-> -Z, Y-> -Y
+            ushort Z = static_cast<ushort>(depth); // Z
+            ushort X = static_cast<ushort>((c-cx)*depth/fx); // X
+            ushort Y = static_cast<ushort>((r-cy)*depth/fy); // Y
+
+            pt.z = Z / 1000.;
+            pt.y = Y / 1000.;
+            pt.x = X / 1000.;
             cloud->push_back(pt);
+            if(c==640 && r==360) std::cout <<"Depth of the central pixel: "<< depth<< " (mm)"<<std::endl;
         }
       }
 
