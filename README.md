@@ -19,7 +19,7 @@ Part of code modify from [ZED Open Capture](https://github.com/stereolabs/zed-op
 ## Run
 `$ mkdir -p catkin_ws/src && cd catkin_ws/src`
 
-`$ git clone git@github.com:Yelloooowww/zed-ros-wrapper-without-cuda.git`
+`$ git clone git@github.com:Yelloooowww/zed_ros_without_cuda`
 
 `$ cd ..`
 
