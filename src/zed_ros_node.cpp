@@ -147,9 +147,9 @@ ZED_ROS_Node::ZED_ROS_Node():it_(nh_){
             float Z = static_cast<float>(ZZ);
             float X = (c-cx)*depth/fx; // X
             float Y = (r-cy)*depth/fy; // Y
-            pt.x = X / 1000.;
-            pt.y = Y / 1000.;
-            pt.z = Z / 1000.;
+            pt.y = -X / 1000.;
+            pt.z = -Y / 1000.;
+            pt.x = Z / 1000.;
 
             cv::Vec3b bgrPixel = left_raw.at<cv::Vec3b>(r, c);
             pt.b = bgrPixel[0];
