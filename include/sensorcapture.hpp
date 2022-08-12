@@ -237,7 +237,7 @@ private:
 
     bool startCapture();                //!< Start data capture thread
 
-    bool open(uint16_t pid, int serial_number); //!< Open the USB connection
+    bool open(uint16_t pid, std::string serial_number); //!< Open the USB connection
     void close();                       //!< Close the USB connection
 
     int enumerateDevices();             //!< Populates the  mSlDevPid map with serial number and PID of the available devices

@@ -322,7 +322,7 @@ bool VideoCapture::initializeVideo( int devId/*=-1*/ )
 
 bool VideoCapture::openCamera( uint8_t devId )
 {
-    mDevId = devId;
+    mDevId = 0;
 
     mDevName = std::string("/dev/video") + std::to_string(mDevId);
 
@@ -468,11 +468,11 @@ bool VideoCapture::openCamera( uint8_t devId )
     mChannels = fmt.fmt.pix.bytesperline / mWidth;
 
     // Asked resolution not available, exiting
-    if (mWidth != width_tmp || mHeight != height_tmp)
-    {
-        ERROR_OUT(mParams.verbose,"Error setting the camera resolution");
-        return false;
-    }
+//    if (mWidth != width_tmp || mHeight != height_tmp)
+//    {
+//        ERROR_OUT(mParams.verbose,"Error setting the camera resolution");
+//        return false;
+//    }
 
     if( -1==input_set_framerate(mFps) )
     {
@@ -742,6 +742,8 @@ SL_DEVICE VideoCapture::getCameraModel( std::string dev_name)
         camera_device = SL_DEVICE::ZED;
     else if (pid == SL_USB_PROD_ZED_M_REVA && vid == SL_USB_VENDOR)
         camera_device = SL_DEVICE::ZED_M;
+    else if (pid == 1664 && vid == 1449)
+        camera_device = SL_DEVICE::ZED_2;
     else if (pid == SL_USB_PROD_ZED_REVB && vid == SL_USB_VENDOR)
         camera_device = SL_DEVICE::ZED_CBS;
     else if (pid == SL_USB_PROD_ZED_M_REVB && vid == SL_USB_VENDOR)

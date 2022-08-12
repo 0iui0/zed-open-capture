@@ -21,7 +21,7 @@
 #ifndef SENSORCAPTURE_DEF_HPP
 #define SENSORCAPTURE_DEF_HPP
 
-#define DEFAULT_GRAVITY (9.8189f)
+#define DEFAULT_GRAVITY (9.7833f)
 #define ACC_SCALE       (DEFAULT_GRAVITY*(8.0f/32768.0f))
 #define GYRO_SCALE      (1000.0f/32768.0f)
 #define MAG_SCALE       (1.0f/16.0f)
@@ -71,6 +71,46 @@ typedef enum CUSTOMHID_REQUEST_ID {
 
 #pragma pack(push)  // push current alignment to stack
 #pragma pack(1)     // set alignment to 1 byte boundary
+
+/*!
+ * \brief The RAW sensor data structure retrieved from camera ov580
+ *
+ */
+typedef struct RawIMUData {
+    uint16_t reportID ;//2
+    uint16_t version ;//2
+    uint16_t numIMUs ;//2
+    uint16_t numSamplesPerImuPerPacket ;//2
+    uint16_t totalPayloadSize ;//2
+    uint32_t reservedPadding0 ;//4
+    uint32_t reservedPadding1 ;//4
+    uint32_t reservedPadding2 ;//4
+    uint32_t reservedPadding3 ;//4
+    uint32_t reservedPadding4 ;//4
+    uint32_t reservedPadding5 ;//4
+    uint32_t reservedPadding6 ;//4
+    uint16_t imuID ;//2
+    uint16_t sampleID ;//2
+    uint16_t temperature ;//2
+    uint64_t gyroTimestamp ;//8
+    uint32_t gyroNumerator ;//4
+    uint32_t gyroDenominator ;//4
+    uint32_t gyroXValue ;//4
+    uint32_t gyroYValue ;//4
+    uint32_t gyroZValue ;//4
+    uint64_t accelTimestamp ;//8
+    uint32_t accelNumerator ;//4
+    uint32_t accelDenominator ;//4
+    uint32_t accelXValue ;//4
+    uint32_t accelYValue ;//4
+    uint32_t accelZValue ;//4
+    uint64_t magTimestamp ;//8
+    uint32_t magNumerator ;//4
+    uint32_t magDenominator ;//4
+    uint32_t magXValue ;//4
+    uint32_t magYValue ;//4
+    uint32_t magZValue ;//4
+} RawIMUData;
 
 /*!
  * \brief The RAW sensor data structure retrieved from camera MCU by USB

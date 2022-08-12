@@ -30,6 +30,32 @@
 
 // #define TEST_FPS 1
 
+void display_dual_stereo_separately(
+        cv::Mat _opencvImage )
+{
+    /// define region of interest for cropped Mat for dual stereo
+    cv::Rect roi_left(
+            0, 						/// start_x
+            0, 						/// start_y
+            _opencvImage.cols/2, 	/// width
+            _opencvImage.rows-1);		/// height
+    cv::Mat cropped_ref_left(_opencvImage, roi_left);
+    cv::Mat cropped_left;
+    cropped_ref_left.copyTo(cropped_left);
+    cv::imshow("cam_left", cropped_left);
+
+    cv::Rect roi_right(
+            _opencvImage.cols/2,     /// start_x
+            0, 						 /// start_y
+            _opencvImage.cols/2, 	 /// width
+            _opencvImage.rows-1);		 /// height
+    cv::Mat cropped_ref_right(_opencvImage, roi_right);
+    cv::Mat cropped_right;
+    cropped_ref_right.copyTo(cropped_right);
+    cv::imshow("cam_right", cropped_right);
+}
+
+
 // The main function
 int main(int argc, char *argv[])
 {
@@ -40,8 +66,8 @@ int main(int argc, char *argv[])
 
     // ----> Create Video Capture
     sl_oc::video::VideoParams params;
-    params.res = sl_oc::video::RESOLUTION::HD720;
-    params.fps = sl_oc::video::FPS::FPS_60;
+    params.res = sl_oc::video::RESOLUTION::HD640;
+    params.fps = sl_oc::video::FPS::FPS_30;
 
     sl_oc::video::VideoCapture cap(params);
     if( !cap.initializeVideo() )
@@ -93,11 +119,12 @@ int main(int argc, char *argv[])
             // ----> Conversion from YUV 4:2:2 to BGR for visualization
             cv::Mat frameYUV = cv::Mat( frame.height, frame.width, CV_8UC2, frame.data );
             cv::Mat frameBGR;
-            cv::cvtColor(frameYUV,frameBGR,cv::COLOR_YUV2BGR_YUYV);
+            cv::cvtColor(frameYUV,frameBGR,cv::COLOR_YUV2GRAY_YVYU);
             // <---- Conversion from YUV 4:2:2 to BGR for visualization
 
             // Show frame
-            sl_oc::tools::showImage( "Stream RGB", frameBGR, params.res  );
+//            sl_oc::tools::showImage( "Stream RGB", frameBGR, params.res  );
+            display_dual_stereo_separately(frameBGR);
         }
         // <---- If the frame is valid we can display it
 
