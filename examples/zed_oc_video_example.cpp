@@ -66,7 +66,7 @@ int main(int argc, char *argv[])
 
     // ----> Create Video Capture
     sl_oc::video::VideoParams params;
-    params.res = sl_oc::video::RESOLUTION::HD640;
+    params.res = sl_oc::video::RESOLUTION::HD480;
     params.fps = sl_oc::video::FPS::FPS_30;
 
     sl_oc::video::VideoCapture cap(params);
@@ -116,15 +116,10 @@ int main(int argc, char *argv[])
             lastFrameTs = frame.timestamp;
 #endif
 
-            // ----> Conversion from YUV 4:2:2 to BGR for visualization
-            cv::Mat frameYUV = cv::Mat( frame.height, frame.width, CV_8UC2, frame.data );
-            cv::Mat frameBGR;
-            cv::cvtColor(frameYUV,frameBGR,cv::COLOR_YUV2GRAY_YVYU);
-            // <---- Conversion from YUV 4:2:2 to BGR for visualization
-
+            cv::Mat frameRAW8 = cv::Mat( frame.height, frame.width, CV_8UC1, frame.data);
             // Show frame
-//            sl_oc::tools::showImage( "Stream RGB", frameBGR, params.res  );
-            display_dual_stereo_separately(frameBGR);
+            sl_oc::tools::showImage( "Stream RAW8", frameRAW8, params.res);
+            display_dual_stereo_separately(frameRAW8);
         }
         // <---- If the frame is valid we can display it
 
