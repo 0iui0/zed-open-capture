@@ -438,7 +438,7 @@ bool VideoCapture::openCamera( uint8_t devId )
     }
 
     fmt.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-    fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_YUYV;
+    fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_SBGGR8;
     fmt.fmt.pix.field = V4L2_FIELD_ANY;
 
     if (mWidth * mHeight != 0)
