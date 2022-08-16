@@ -275,4 +275,57 @@ if(BUILD_EXAMPLES)
             RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/bin
         )
     endif()
+    if(BUILD_ROS)
+        find_package(OpenCV REQUIRED)
+        find_package(OpenMP)
+        find_package(catkin REQUIRED COMPONENTS
+                geometry_msgs
+                nav_msgs
+                roscpp
+                rospy
+                std_msgs
+                pcl_ros
+                message_generation
+                tf2
+                sensor_msgs
+                cv_bridge
+                std_msgs
+                image_transport
+                )
+
+        ## Generate added messages and services with any dependencies listed here
+        generate_messages(
+                DEPENDENCIES
+                geometry_msgs
+                nav_msgs
+                std_msgs  # Or other packages containing msgs
+        )
+        catkin_package(
+                CATKIN_DEPENDS
+                roscpp
+                rospy
+                pcl_ros
+                geometry_msgs
+                nav_msgs std_msgs
+                tf2
+                message_runtime
+                sensor_msgs
+                cv_bridge
+                std_msgs
+                image_transport
+        )
+        ## Specify additional locations of header files
+        ## Your package locations should be listed before other locations
+        include_directories(
+                include
+                ${catkin_INCLUDE_DIRS}
+                ${HIDAPI_INCLUDE_DIRS}
+                ${LibUSB_INCLUDE_DIRS}
+                ${PROJECT_SOURCE_DIR}/include
+                ${OpenCV_INCLUDE_DIRS}
+        )
+        add_executable(zed_ros_node src/zed_ros_node.cpp src/zed_ros_node.h )
+        add_dependencies(zed_ros_node ${catkin_EXPORTED_TARGETS} ${PROJECT_NAME}_gencpp)
+        target_link_libraries(zed_ros_node ${catkin_LIBRARIES} ${PROJECT_NAME} ${OpenCV_LIBS})
+    endif()
 endif()

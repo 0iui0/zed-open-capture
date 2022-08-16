@@ -1,5 +1,5 @@
 <launch>
-    <arg name="pkg_name" value="zed_ros_without_cuda"/>
+    <arg name="pkg_name" value="zed_open_capture"/>
 
     <node pkg="$(arg pkg_name)" type="anyzed_ros_node" name="zed_ros_node" />
 

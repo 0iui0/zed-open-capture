@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>zed_ros_without_cuda</name>
+  <name>zed_open_capture</name>
   <version>0.0.0</version>
-  <description>zed_ros_without_cuda</description>
+  <description>zed_open_capture</description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag -->
   <!-- Example:  -->
