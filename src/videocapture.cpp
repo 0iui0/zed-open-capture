@@ -323,7 +323,7 @@ bool VideoCapture::initializeVideo( int devId/*=-1*/ )
 bool VideoCapture::openCamera( uint8_t devId )
 {
     mDevId = 0;
-
+    // 0.device name
     mDevName = std::string("/dev/video") + std::to_string(mDevId);
 
     if( mParams.verbose )
@@ -383,7 +383,7 @@ bool VideoCapture::openCamera( uint8_t devId )
     }
 
     mFileDesc = 0;
-
+    // 1.Open the device
     mFileDesc = open(mDevName.c_str(), O_RDWR|O_NONBLOCK,0); // Reading are non blocking
 
     if (-1 == mFileDesc)
@@ -415,7 +415,7 @@ bool VideoCapture::openCamera( uint8_t devId )
     memset(&crop, 0, sizeof (v4l2_crop));
     struct v4l2_format fmt;
     memset(&fmt, 0, sizeof (v4l2_format));
-
+    // 2.VIDIOC_QUERYCAP Ask the device if it can capture frames
     if( -1==xioctl(mFileDesc, VIDIOC_QUERYCAP, &cap) )
     {
         if(mParams.verbose)
@@ -430,7 +430,7 @@ bool VideoCapture::openCamera( uint8_t devId )
 
     cropcap.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
 
-    // Query the Capture
+    // 2.VIDIOC_CROPCAP Query the Capture
     if (0 == xioctl(mFileDesc, VIDIOC_CROPCAP, &cropcap))
     {
         crop.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
@@ -451,6 +451,7 @@ bool VideoCapture::openCamera( uint8_t devId )
     int height_tmp = mHeight;
 
     /* Preserve original settings as set by v4l2-ctl for example */
+    // 3.VIDIOC_S_FMT Set Image format
     if( -1==xioctl(mFileDesc, VIDIOC_S_FMT/*VIDIOC_G_FMT*/, &fmt) )
     {
         if(mParams.verbose)
@@ -494,6 +495,7 @@ bool VideoCapture::openCamera( uint8_t devId )
 
     req.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
     req.memory = V4L2_MEMORY_MMAP;
+    // 4.VIDIOC_REQBUFS Request Buffers from the device
     if( -1==xioctl(mFileDesc, VIDIOC_REQBUFS, &req) )
     {
         if(mParams.verbose)
@@ -517,6 +519,7 @@ bool VideoCapture::openCamera( uint8_t devId )
         buf.memory = V4L2_MEMORY_MMAP;
         buf.index = mBufCount;
         buf.flags = V4L2_BUF_FLAG_TIMESTAMP_MONOTONIC;
+        // 5.VIDIOC_QUERYBUF Query the buffer to get raw data
         if( -1==xioctl(mFileDesc, VIDIOC_QUERYBUF, &buf))
         {
             if(mParams.verbose)
@@ -605,6 +608,7 @@ bool VideoCapture::startCapture()
         buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
         buf.memory = V4L2_MEMORY_MMAP;
         buf.index = i;
+        // 6.VIDIOC_QBUF Queue the buffer
         if( -1==xioctl(mFileDesc, VIDIOC_QBUF, &buf) )
         {
             if(mParams.verbose)
@@ -619,7 +623,7 @@ bool VideoCapture::startCapture()
     }
     type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
 
-    // Set priority
+    // 6.VIDIOC_G_PRIORITY Set priority
     int priority = V4L2_PRIORITY_RECORD;
     if( -1==xioctl(mFileDesc, VIDIOC_G_PRIORITY, &priority) )
     {
@@ -633,7 +637,7 @@ bool VideoCapture::startCapture()
         return false;
     }
 
-    // Start streaming
+    // 7.VIDIOC_STREAMON Activate streaming and start streaming
     if( -1==xioctl(mFileDesc, VIDIOC_STREAMON, &type) )
     {
         if(mParams.verbose)
@@ -791,6 +795,7 @@ void VideoCapture::grabThreadFunc()
         mGrabRunning=true;
 
         mComMutex.lock();
+        // 8.VIDIOC_DQBUF Dequeue the buffer
         int ret = ioctl(mFileDesc, VIDIOC_DQBUF, &buf);
         mComMutex.unlock();
 
