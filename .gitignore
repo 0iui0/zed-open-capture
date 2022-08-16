@@ -56,3 +56,26 @@ compile_commands.json
 
 # Documentation
 doc/html/
+# Prerequisites
+*.d
+
+# Compiled Object files
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+
+# Fortran module files
+*.mod
+*.smod
+
+# Compiled Static libraries
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
