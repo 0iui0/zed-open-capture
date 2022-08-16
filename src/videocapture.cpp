@@ -464,16 +464,16 @@ bool VideoCapture::openCamera( uint8_t devId )
         return false;
     }
 
-    mWidth = fmt.fmt.pix.width;
+    mWidth = fmt.fmt.pix.width*2;
     mHeight = fmt.fmt.pix.height;
     mChannels = fmt.fmt.pix.bytesperline / mWidth;
 
     // Asked resolution not available, exiting
-//    if (mWidth != width_tmp || mHeight != height_tmp)
-//    {
-//        ERROR_OUT(mParams.verbose,"Error setting the camera resolution");
-//        return false;
-//    }
+    if (mWidth != width_tmp || mHeight != height_tmp)
+    {
+        ERROR_OUT(mParams.verbose,"Error setting the camera resolution");
+        return false;
+    }
 
     if( -1==input_set_framerate(mFps) )
     {
