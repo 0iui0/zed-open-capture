@@ -59,7 +59,7 @@ private:
   int w, h;
   double now, elapsed_sec, lastTime, baseline, fx, fy, cx, cy, remap_elapsed, resize_fact, elapsed, num;
   std::string calibration_file;
-  cv::Mat frameYUV, frameBGR, left_raw, left_rect, right_raw, right_rect, left_for_matcher, right_for_matcher, left_disp_half,left_disp,left_disp_float, left_disp_vis, left_depth_map, left_disp_image;
+  cv::Mat frameRAW8, frameBGR, left_raw, left_rect, right_raw, right_rect, left_for_matcher, right_for_matcher, left_disp_half,left_disp,left_disp_float, left_disp_vis, left_depth_map, left_disp_image;
   cv::Mat map_left_x, map_left_y;
   cv::Mat map_right_x, map_right_y;
   cv::Mat cameraMatrix_left, cameraMatrix_right;

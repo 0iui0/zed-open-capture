@@ -90,13 +90,9 @@ ZED_ROS_Node::ZED_ROS_Node():it_(nh_){
 
     // ----> If the frame is valid we can display it
     if(frame.data!=nullptr){
-      // ----> Conversion from YUV 4:2:2 to BGR for visualization
-      frameYUV = cv::Mat( frame.height, frame.width, CV_8UC2, frame.data );
-      cv::cvtColor(frameYUV,frameBGR,cv::COLOR_YUV2BGR_YUYV);
-      // <---- Conversion from YUV 4:2:2 to BGR for visualization
-      // ----> Extract left and right images from side-by-side
-      left_raw = frameBGR(cv::Rect(0, 0, frameBGR.cols / 2, frameBGR.rows));
-      right_raw = frameBGR(cv::Rect(frameBGR.cols / 2, 0, frameBGR.cols / 2, frameBGR.rows));
+      frameRAW8 = cv::Mat( frame.height, frame.width, CV_8UC1, frame.data );
+      left_raw = frameRAW8(cv::Rect(0, 0, frameRAW8.cols / 2, frameRAW8.rows-1));
+      right_raw = frameRAW8(cv::Rect(frameRAW8.cols / 2, 0, frameRAW8.cols / 2, frameRAW8.rows-1));
       // <---- Extract left and right images from side-by-side
 
 
@@ -185,10 +181,10 @@ ZED_ROS_Node::ZED_ROS_Node():it_(nh_){
 //      img_bridge = cv_bridge::CvImage(header, sensor_msgs::image_encodings::TYPE_8UC1 , left_disp_image);
 //      img_bridge.toImageMsg(img_msg); // from cv_bridge to sensor_msgs::Image
 //      pub_depth.publish(img_msg);
-      img_bridge = cv_bridge::CvImage(header, sensor_msgs::image_encodings::BGR8 , left_raw);
+      img_bridge = cv_bridge::CvImage(header, sensor_msgs::image_encodings::MONO8 , left_raw);
       img_bridge.toImageMsg(img_msg); // from cv_bridge to sensor_msgs::Image
       pub_left.publish(img_msg);
-      img_bridge = cv_bridge::CvImage(header, sensor_msgs::image_encodings::BGR8 , right_raw);
+      img_bridge = cv_bridge::CvImage(header, sensor_msgs::image_encodings::MONO8 , right_raw);
       img_bridge.toImageMsg(img_msg); // from cv_bridge to sensor_msgs::Image
       pub_right.publish(img_msg);
     }
