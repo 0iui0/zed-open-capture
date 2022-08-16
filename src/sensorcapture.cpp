@@ -63,7 +63,7 @@ int SensorCapture::enumerateDevices()
     if (hid_init()==-1)
         return 0;
 
-    devs = hid_enumerate(SL_USB_VENDOR, 0x0);
+    devs = hid_enumerate(SL_USB_VENDOR, 0x0680);
     cur_dev = devs;
     while (cur_dev) {
         int fw_major = cur_dev->release_number>>8;
@@ -75,8 +75,8 @@ int SensorCapture::enumerateDevices()
             continue;
         }
         std::string sn_str = wstr2str( cur_dev->serial_number );
-        int sn = std::stoi( sn_str );
-
+//        int sn = std::stoi( sn_str );
+        int sn=0;
         mSlDevPid[sn]=pid;
         mSlDevFwVer[sn]=cur_dev->release_number;
 
@@ -118,16 +118,16 @@ std::vector<int> SensorCapture::getDeviceList(bool refresh)
     return sn_vec;
 }
 
-bool SensorCapture::open( uint16_t pid, int serial_number)
+bool SensorCapture::open( uint16_t pid, std::string serial_number)
 {
-    std::string sn_str = std::to_string(serial_number);
+    std::string sn_str = serial_number;
     std::wstring wide_sn_string = std::wstring(sn_str.begin(), sn_str.end());
 
     const wchar_t* wsn = wide_sn_string.c_str();
 
     mDevHandle = hid_open(SL_USB_VENDOR, pid, wsn );
 
-    if(mDevHandle) mDevSerial = serial_number;
+    if(mDevHandle) mDevSerial = 0;
 
     return mDevHandle!=0;
 }
@@ -158,8 +158,8 @@ bool SensorCapture::initializeSensors( int sn )
     }
 
     uint16_t pid = mSlDevPid[sn];
-
-    if(!open( pid,sn))
+    sn_str="OV0001";
+    if(!open( pid,sn_str))
     {
         std::string msg = "Connection to device with sn ";
         msg += std::to_string(sn);
@@ -314,7 +314,7 @@ void SensorCapture::grabThreadFunc()
     mNewCamTempData=false;
 
     // Read sensor data
-    unsigned char usbBuf[65];
+    unsigned char usbBuf[128];
 
     int ping_data_count = 0;
 
@@ -340,8 +340,8 @@ void SensorCapture::grabThreadFunc()
         mGrabRunning=true;
 
         // Sensor data request
-        usbBuf[1]=usb::REP_ID_SENSOR_DATA;
-        int res = hid_read_timeout( mDevHandle, usbBuf, 64, 2000 );
+//        usbBuf[1]=usb::REP_ID_SENSOR_DATA;
+        int res = hid_read_timeout( mDevHandle, usbBuf, 128, 2000 );
 
         // ----> Data received?
         if( res < static_cast<int>(sizeof(usb::RawData)) )  {
@@ -351,7 +351,7 @@ void SensorCapture::grabThreadFunc()
         // <---- Data received?
 
         // ----> Received data are correct?
-        int target_struct_id = 0;
+        int target_struct_id = 1;
         if (mDevPid==SL_USB_PROD_MCU_ZED2_REVA || mDevPid==SL_USB_PROD_MCU_ZED2i_REVA)
             target_struct_id = usb::REP_ID_SENSOR_DATA;
 
@@ -368,12 +368,12 @@ void SensorCapture::grabThreadFunc()
         // <---- Received data are correct?
 
         // Data structure static conversion
-        usb::RawData* data = (usb::RawData*)usbBuf;
+        usb::RawIMUData* data = (usb::RawIMUData*)usbBuf;
 
         // ----> Timestamp update
-        uint64_t mcu_ts_nsec = static_cast<uint64_t>(std::round(static_cast<float>(data->timestamp)*TS_SCALE));
+        uint64_t mcu_ts_nsec = static_cast<uint64_t>(std::round(static_cast<float>(data->gyroTimestamp)*TS_SCALE));
 
-        if(mFirstImuData && data->imu_not_valid!=1)
+        if(mFirstImuData)
         {
             mStartSysTs = getWallTimestamp(); // Starting system timestamp
             //std::cout << "SensorCapture: " << mStartSysTs << std::endl;
@@ -397,7 +397,7 @@ void SensorCapture::grabThreadFunc()
         uint64_t current_data_ts = (mStartSysTs-mSyncOffset) + rel_mcu_ts;
 
         // ----> Camera/Sensors Synchronization
-        if( data->sync_capabilities != 0 ) // Synchronization active
+/*        if( data->sync_capabilities != 0 ) // Synchronization active
         {
             if(mLastFrameSyncCount!=0 && (data->frame_sync!=0 || data->frame_sync_count>mLastFrameSyncCount))
             {
@@ -451,21 +451,21 @@ void SensorCapture::grabThreadFunc()
                 }
             }
         }
-        mLastFrameSyncCount = data->frame_sync_count;
+        mLastFrameSyncCount = data->frame_sync_count;*/
         // <---- Camera/Sensors Synchronization
 
         // ----> IMU data
         mIMUMutex.lock();
-        mLastIMUData.sync = data->frame_sync;
-        mLastIMUData.valid = (data->imu_not_valid!=1)?(data::Imu::NEW_VAL):(data::Imu::OLD_VAL);
+//        mLastIMUData.sync = data->frame_sync;
+//        mLastIMUData.valid = (data->imu_not_valid!=1)?(data::Imu::NEW_VAL):(data::Imu::OLD_VAL);
         mLastIMUData.timestamp = current_data_ts;
-        mLastIMUData.aX = data->aX*ACC_SCALE;
-        mLastIMUData.aY = data->aY*ACC_SCALE;
-        mLastIMUData.aZ = data->aZ*ACC_SCALE;
-        mLastIMUData.gX = data->gX*GYRO_SCALE;
-        mLastIMUData.gY = data->gY*GYRO_SCALE;
-        mLastIMUData.gZ = data->gZ*GYRO_SCALE;
-        mLastIMUData.temp = data->imu_temp*TEMP_SCALE;
+        mLastIMUData.aX = data->accelXValue*ACC_SCALE;
+        mLastIMUData.aY = data->accelYValue*ACC_SCALE;
+        mLastIMUData.aZ = data->accelZValue*ACC_SCALE;
+        mLastIMUData.gX = data->gyroXValue*GYRO_SCALE;
+        mLastIMUData.gY = data->gyroYValue*GYRO_SCALE;
+        mLastIMUData.gZ = data->gyroZValue*GYRO_SCALE;
+//        mLastIMUData.temp = data->imu_temp*TEMP_SCALE;
         mNewIMUData = true;
         mIMUMutex.unlock();
 
@@ -474,7 +474,7 @@ void SensorCapture::grabThreadFunc()
         // <---- IMU data
 
         // ----> Magnetometer data
-        if(data->mag_valid == data::Magnetometer::NEW_VAL)
+/*        if(data->mag_valid == data::Magnetometer::NEW_VAL)
         {
             mMagMutex.lock();
             mLastMagData.valid = data::Magnetometer::NEW_VAL;
@@ -552,7 +552,7 @@ void SensorCapture::grabThreadFunc()
         else
         {
             mLastCamTempData.valid = data::Temperature::OLD_VAL;
-        }
+        }*/
         // <---- Camera sensors temperature data
     }
 

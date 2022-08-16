@@ -52,6 +52,7 @@ enum class RESOLUTION {
     HD1080,     /**< 1920*1080, available framerates: 15, 30 fps.*/
     HD720,      /**< 1280*720, available framerates: 15, 30, 60 fps.*/
     VGA,        /**< 672*376, available framerates: 15, 30, 60, 100 fps.*/
+    HD480,      /**< 1280*481, available framerates: 15, 30, 60 fps.*/
     LAST
 };
 
@@ -117,7 +118,8 @@ static const std::vector<Resolution> cameraResolution = {
     Resolution(2208, 1242),     /**< HD2K */
     Resolution(1920, 1080),     /**< HD1080 */
     Resolution(1280, 720),      /**< HD720 */
-    Resolution(672, 376)        /**< VGA */
+    Resolution(672, 376),        /**< VGA */
+    Resolution(640, 481)        /**< 480p */
 };
 
 

@@ -70,7 +70,8 @@ inline uint64_t getWallTimestamp() {return std::chrono::duration_cast<std::chron
 
 namespace sl_oc {
 
-static const uint16_t SL_USB_VENDOR = 0x2b03;           //!< Stereolabs Vendor ID
+static const uint16_t SL_USB_VENDOR = 0x05a9;           //!< Stereolabs Vendor ID
+static const uint16_t NE_USB_VENDOR = 0x05a9;           //!< Stereolabs Vendor ID
 
 static const uint16_t SL_USB_PROD_ZED_REVA = 0xf580;         //!< Old ZED firmware Product ID
 static const uint16_t SL_USB_PROD_ZED_M_REVA = 0xf680;       //!< Old ZED-M binary modified firmware Product ID

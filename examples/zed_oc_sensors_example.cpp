@@ -82,7 +82,7 @@ int main(int argc, char *argv[])
     {
         // ----> Get IMU data with a timeout of 5 millisecods
         const sl_oc::sensors::data::Imu imuData = sens.getLastIMUData(5000);
-        if( imuData.valid == sl_oc::sensors::data::Imu::NEW_VAL  )
+        if(true)
         {
             std::cout << "**** New IMU data ****" << std::endl;
             std::cout << " * Timestamp: " << imuData.timestamp << " nsec" << std::endl;
