@@ -24,6 +24,7 @@
 #include <ros/package.h>
 #include <sensor_msgs/PointCloud2.h>
 #include <geometry_msgs/Vector3.h>
+#include <sensor_msgs/Imu.h>
 
 // cv_bridge
 #include <ros/ros.h>
@@ -51,7 +52,7 @@ private:
   NodeHandle nh_;
   image_transport::ImageTransport it_;
   image_transport::Publisher pub_left, pub_right, pub_depth;
-  ros::Publisher pub_pc;
+  ros::Publisher pub_pc,  pub_imu;
   cv_bridge::CvImage img_bridge;
   sensor_msgs::Image img_msg; // >> message to be sent
   std_msgs::Header header; // empty header

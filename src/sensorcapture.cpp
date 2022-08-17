@@ -457,7 +457,7 @@ void SensorCapture::grabThreadFunc()
         // ----> IMU data
         mIMUMutex.lock();
 //        mLastIMUData.sync = data->frame_sync;
-//        mLastIMUData.valid = (data->imu_not_valid!=1)?(data::Imu::NEW_VAL):(data::Imu::OLD_VAL);
+        mLastIMUData.valid = data::Imu::NEW_VAL;
         mLastIMUData.timestamp = current_data_ts;
         mLastIMUData.aX = data->accelXValue*ACC_SCALE;
         mLastIMUData.aY = data->accelYValue*ACC_SCALE;

@@ -4,6 +4,7 @@ ZED_ROS_Node::ZED_ROS_Node():it_(nh_){
   // ros
   pub_left = it_.advertise("left_raw", 1);
   pub_right = it_.advertise("right_raw", 1);
+  pub_imu = nh_.advertise<sensor_msgs::Imu>("/imu",1);
 //  pub_depth = it_.advertise("left_depth", 1);
 //  pub_pc = nh_.advertise<sensor_msgs::PointCloud2>("points", 1);
   counter = 0;
@@ -26,7 +27,42 @@ ZED_ROS_Node::ZED_ROS_Node():it_(nh_){
   sn = cap.getSerialNumber();
   std::cout << "Connected to camera sn: " << sn << std::endl;
   // <---- Create Video Capture
+  // Create a SensorCapture object
+  sl_oc::sensors::SensorCapture sens(verbose);
 
+  // ----> Get a list of available camera with sensor
+  std::vector<int> devs = sens.getDeviceList();
+
+  if( devs.size()==0 )
+  {
+      std::cerr << "No available ZED Mini or ZED2 cameras" << std::endl;
+  }
+  // <---- Get a list of available camera with sensor
+
+  // ----> Inizialize the sensors
+  if( !sens.initializeSensors( devs[0] ) )
+  {
+      std::cerr << "Connection failed" << std::endl;
+  }
+
+  std::cout << "Sensor Capture connected to camera sn: " << sens.getSerialNumber() << std::endl;
+  // <---- Inizialize the sensors
+
+  // ----> Get FW version information
+  uint16_t fw_maior;
+  uint16_t fw_minor;
+
+  sens.getFirmwareVersion( fw_maior, fw_minor );
+
+  std::cout << " * Firmware version: " << std::to_string(fw_maior) << "." << std::to_string(fw_minor) << std::endl;
+  // <---- Get FW version information
+
+  // ----> Variables to calculate sensors frequencies
+  uint64_t last_imu_ts = 0;
+  uint64_t last_mag_ts = 0;
+  uint64_t last_env_ts = 0;
+  uint64_t last_cam_temp_ts = 0;
+  // <---- Variables to calculate sensors frequencies
 
   // ----> Retrieve calibration file from Stereolabs server
   // ZED Calibration
@@ -189,6 +225,21 @@ ZED_ROS_Node::ZED_ROS_Node():it_(nh_){
       pub_right.publish(img_msg);
     }
     // <---- If the frame is valid we can display it
+
+    // Get last available imu
+    const sl_oc::sensors::data::Imu imuData = sens.getLastIMUData(5000);
+    if (imuData.valid){
+        sensor_msgs::Imu imu_msg;
+        imu_msg.header.frame_id = "imu";
+        imu_msg.header.stamp = ros::Time::now();
+        imu_msg.linear_acceleration.x = imuData.aX;
+        imu_msg.linear_acceleration.y = imuData.aY;
+        imu_msg.linear_acceleration.z = imuData.aZ;
+        imu_msg.angular_velocity.x = imuData.gX;
+        imu_msg.angular_velocity.y = imuData.gY;
+        imu_msg.angular_velocity.z = imuData.gZ;
+        pub_imu.publish(imu_msg);
+    }
 
     ros::spinOnce();
   }
