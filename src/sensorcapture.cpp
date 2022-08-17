@@ -474,31 +474,31 @@ void SensorCapture::grabThreadFunc()
         // <---- IMU data
 
         // ----> Magnetometer data
-/*        if(data->mag_valid == data::Magnetometer::NEW_VAL)
-        {
+//        if(data->mag_valid == data::Magnetometer::NEW_VAL)
+//        {
             mMagMutex.lock();
             mLastMagData.valid = data::Magnetometer::NEW_VAL;
             mLastMagData.timestamp = current_data_ts;
-            mLastMagData.mY = data->mY*MAG_SCALE;
-            mLastMagData.mZ = data->mZ*MAG_SCALE;
-            mLastMagData.mX = data->mX*MAG_SCALE;
+            mLastMagData.mY = data->magXValue*MAG_SCALE;
+            mLastMagData.mZ = data->magYValue*MAG_SCALE;
+            mLastMagData.mX = data->magZValue*MAG_SCALE;
             mNewMagData = true;
             mMagMutex.unlock();
 
             //std::string msg = std::to_string(mLastMAGData.timestamp);
             //INFO_OUT(msg);
-        }
-        else
-        {
-            if(data->mag_valid==0)
-                mLastMagData.valid = data::Magnetometer::NOT_PRESENT;
-            else if(data->mag_valid==1)
-                mLastMagData.valid = data::Magnetometer::OLD_VAL;
-            else
-                mLastMagData.valid = data::Magnetometer::NEW_VAL;
-        }
+//        }
+//        else
+//        {
+//            if(data->mag_valid==0)
+//                mLastMagData.valid = data::Magnetometer::NOT_PRESENT;
+//            else if(data->mag_valid==1)
+//                mLastMagData.valid = data::Magnetometer::OLD_VAL;
+//            else
+//                mLastMagData.valid = data::Magnetometer::NEW_VAL;
+//        }
         // <---- Magnetometer data
-
+/*
         // ----> Environmental data
         if(data->env_valid == data::Environment::NEW_VAL)
         {
