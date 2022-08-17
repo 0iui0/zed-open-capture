@@ -92,7 +92,7 @@ int main(int argc, char *argv[])
             }
             last_imu_ts = imuData.timestamp;
             std::cout << " * Accelerations [m/s²]: " << imuData.aX << " " << imuData.aY << " " << imuData.aZ << std::endl;
-            std::cout << " * Angular Velocities [°/s]: " << imuData.gX << " " << imuData.gY << " " << imuData.gZ << std::endl;
+            std::cout << " * Angular Velocities [rad/s]: " << imuData.gX << " " << imuData.gY << " " << imuData.gZ << std::endl;
         }
         // <---- Get IMU data with a timeout of 5 millisecods
 
