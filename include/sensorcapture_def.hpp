@@ -21,6 +21,21 @@
 #ifndef SENSORCAPTURE_DEF_HPP
 #define SENSORCAPTURE_DEF_HPP
 
+//IMU相关
+//45纬度的重力加速度大小，后期要根据纬度进行计算
+#define gravityG 9.80665f
+
+//现在的imu设备的加速度原始数据单位是4096LSB/g
+//需要的数据单位是m/s^2,需要将取出来的数值除以LSBTOMS2
+#define ACCLSB 4096.0f
+#define LSBTOMS2 ACCLSB*gravityG
+
+//现在的imu设备的陀螺仪原始数据单位是16.4LSB/°/s
+//需要的数据单位是rad/s,需要将取出来的数值除以LSBTORADS
+#define GYRLSB 16.4f
+#define PI 3.1415926535898f
+#define LSBTORADS GYRLSB / 180 * PI
+
 #define DEFAULT_GRAVITY (9.7833f)
 #define ACCLSB 4096.0f
 #define ACC_SCALE 1.0f / ACCLSB * DEFAULT_GRAVITY
