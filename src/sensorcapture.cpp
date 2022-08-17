@@ -465,7 +465,7 @@ void SensorCapture::grabThreadFunc()
         mLastIMUData.gX = data->gyroXValue*GYRO_SCALE;
         mLastIMUData.gY = data->gyroYValue*GYRO_SCALE;
         mLastIMUData.gZ = data->gyroZValue*GYRO_SCALE;
-//        mLastIMUData.temp = data->imu_temp*TEMP_SCALE;
+        mLastIMUData.temp = data->temperature*TEMP_SCALE;
         mNewIMUData = true;
         mIMUMutex.unlock();
 
