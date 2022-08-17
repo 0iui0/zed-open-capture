@@ -479,9 +479,9 @@ void SensorCapture::grabThreadFunc()
             mMagMutex.lock();
             mLastMagData.valid = data::Magnetometer::NEW_VAL;
             mLastMagData.timestamp = current_data_ts;
-            mLastMagData.mY = data->magXValue*MAG_SCALE;
-            mLastMagData.mZ = data->magYValue*MAG_SCALE;
-            mLastMagData.mX = data->magZValue*MAG_SCALE;
+            mLastMagData.mY = data->magYValue*MAG_SCALE;
+            mLastMagData.mZ = data->magZValue*MAG_SCALE;
+            mLastMagData.mX = data->magXValue*MAG_SCALE;
             mNewMagData = true;
             mMagMutex.unlock();
 
