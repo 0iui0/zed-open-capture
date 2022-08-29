@@ -21,17 +21,11 @@
 #ifndef SENSORCAPTURE_DEF_HPP
 #define SENSORCAPTURE_DEF_HPP
 
-//IMU相关
-//45纬度的重力加速度大小，后期要根据纬度进行计算
 #define gravityG 9.80665f
 
-//现在的imu设备的加速度原始数据单位是4096LSB/g
-//需要的数据单位是m/s^2,需要将取出来的数值除以LSBTOMS2
 #define ACCLSB 4096.0f
 #define LSBTOMS2 ACCLSB*gravityG
 
-//现在的imu设备的陀螺仪原始数据单位是16.4LSB/°/s
-//需要的数据单位是rad/s,需要将取出来的数值除以LSBTORADS
 #define GYRLSB 16.4f
 #define PI 3.1415926535898f
 #define LSBTORADS GYRLSB / 180 * PI
@@ -112,29 +106,29 @@ typedef struct RawIMUData {
     uint16_t sampleID ;//2
     uint16_t temperature ;//2
     uint64_t gyroTimestamp ;//8
-    uint32_t gyroNumerator ;//4
-    uint32_t gyroDenominator ;//4
-    uint16_t gyroXValue ;//4
-    uint16_t gx_ ;//4
-    uint16_t gyroYValue ;//4
-    uint16_t gy_ ;//4
-    uint16_t gyroZValue ;//4
-    uint16_t gz_ ;//4
+    int32_t gyroNumerator ;//4
+    int32_t gyroDenominator ;//4
+    int16_t gyroXValue ;//4
+    int16_t gx_ ;//4
+    int16_t gyroYValue ;//4
+    int16_t gy_ ;//4
+    int16_t gyroZValue ;//4
+    int16_t gz_ ;//4
     uint64_t accelTimestamp ;//8
-    uint32_t accelNumerator ;//4
-    uint32_t accelDenominator ;//4
-    uint16_t accelXValue ;//4
-    uint16_t ax_ ;//4
-    uint16_t accelYValue ;//4
-    uint16_t ay_ ;//4
-    uint16_t accelZValue ;//4
-    uint16_t az_ ;//4
+    int32_t accelNumerator ;//4
+    int32_t accelDenominator ;//4
+    int16_t accelXValue ;//4
+    int16_t ax_ ;//4
+    int16_t accelYValue ;//4
+    int16_t ay_ ;//4
+    int16_t accelZValue ;//4
+    int16_t az_ ;//4
     uint64_t magTimestamp ;//8
-    uint32_t magNumerator ;//4
-    uint32_t magDenominator ;//4
-    uint32_t magXValue ;//4
-    uint32_t magYValue ;//4
-    uint32_t magZValue ;//4
+    int32_t magNumerator ;//4
+    int32_t magDenominator ;//4
+    int32_t magXValue ;//4
+    int32_t magYValue ;//4
+    int32_t magZValue ;//4
 } RawIMUData;
 
 /*!
