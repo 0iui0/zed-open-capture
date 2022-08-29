@@ -322,7 +322,7 @@ bool VideoCapture::initializeVideo( int devId/*=-1*/ )
 
 bool VideoCapture::openCamera( uint8_t devId )
 {
-    mDevId = 0;
+    mDevId = devId;
     // 0.device name
     mDevName = std::string("/dev/video") + std::to_string(mDevId);
 
