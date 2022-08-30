@@ -804,7 +804,8 @@ void VideoCapture::grabThreadFunc()
             mCurrentIndex = buf.index;
             // get buffer timestamp in us
 
-            uint64_t ts_uvc = ((uint64_t) buf.timestamp.tv_sec) * (1000 * 1000) + ((uint64_t) buf.timestamp.tv_usec);
+            uint64_t ts_uvc;
+            memcpy(&ts_uvc, (unsigned char*) mBuffers[mCurrentIndex].start + 640 * 2 * 480, 8);
 
             if(mFirstFrame)
             {

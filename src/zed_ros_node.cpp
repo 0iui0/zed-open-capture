@@ -206,7 +206,8 @@ ZED_ROS_Node::ZED_ROS_Node():it_(nh_){
 
 
       header.seq = counter; // user defined counter
-      header.stamp = ros::Time::now(); // time
+      ros::Time imgT(0,frame.timestamp);
+      header.stamp = imgT; // time
       header.frame_id = "zed_mini";
 
 //      sensor_msgs::PointCloud2 ros_points;
@@ -231,7 +232,8 @@ ZED_ROS_Node::ZED_ROS_Node():it_(nh_){
     if (imuData.valid){
         sensor_msgs::Imu imu_msg;
         imu_msg.header.frame_id = "imu";
-        imu_msg.header.stamp = ros::Time::now();
+        ros::Time imuT(0,imuData.timestamp);
+        imu_msg.header.stamp = imuT;
         imu_msg.linear_acceleration.x = imuData.aX;
         imu_msg.linear_acceleration.y = imuData.aY;
         imu_msg.linear_acceleration.z = imuData.aZ;
