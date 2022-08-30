@@ -104,7 +104,7 @@ typedef struct RawIMUData {
     uint32_t reservedPadding6 ;//4
     uint16_t imuID ;//2
     uint16_t sampleID ;//2
-    uint16_t temperature ;//2
+    int16_t temperature ;//2
     uint64_t gyroTimestamp ;//8
     int32_t gyroNumerator ;//4
     int32_t gyroDenominator ;//4
@@ -126,9 +126,12 @@ typedef struct RawIMUData {
     uint64_t magTimestamp ;//8
     int32_t magNumerator ;//4
     int32_t magDenominator ;//4
-    int32_t magXValue ;//4
-    int32_t magYValue ;//4
-    int32_t magZValue ;//4
+    int16_t magXValue ;//4
+    int16_t magX_ ;//4
+    int16_t magYValue ;//4
+    int16_t magY_ ;//4
+    int16_t magZValue ;//4
+    int16_t magZ_ ;//4
 } RawIMUData;
 
 /*!
