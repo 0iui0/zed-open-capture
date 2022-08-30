@@ -371,7 +371,7 @@ void SensorCapture::grabThreadFunc()
         usb::RawIMUData* data = (usb::RawIMUData*)usbBuf;
 
         // ----> Timestamp update
-        uint64_t mcu_ts_nsec = static_cast<uint64_t>(std::round(static_cast<float>(data->gyroTimestamp)*TS_SCALE));
+        uint64_t mcu_ts_nsec = static_cast<uint64_t>(std::round(static_cast<float>(data->gyroTimestamp)));
 
         if(mFirstImuData)
         {
