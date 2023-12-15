@@ -21,6 +21,8 @@
  * Video Capture
     - YUV 4:2:2 data format
     - Camera controls
+    - HIGH-RESOLUTION mode (requires USB3)
+    - VGA mode with USB2
  * Sensor Data Capture [Not available for ZED]
     - 6-DOF IMU (3-DOF accelerometer + 3-DOF gyroscope)
     - 3-DOF Magnetometer [Only ZED2 and ZED2i]
@@ -37,7 +39,7 @@
     - Video capture
     - Camera control
     - Stereo rectification
-    - IMU, magnetometer and barometer data capture
+    - IMU, magnetometer, and barometer data capture
     - Video and sensors synchronization
     - Disparity/Depth/Point Cloud extraction using OpenCV Transparent API
     - Depth tuning using OpenCV control GUI
@@ -46,7 +48,7 @@
 
 The ZED Open Capture is a multi-platform, open-source C++ library for low-level camera and sensor capture for the ZED stereo camera family. It doesn't require CUDA and therefore can be used on many desktop and embedded platforms.
 
-The open-source library provides methods to access raw video frames, calibration data, camera controls and raw data from the camera sensors (on ZED 2, ZED 2i, and ZED Mini). A synchronization mechanism is provided to get the correct sensor data associated to a video frame.
+The open-source library provides methods to access raw video frames, calibration data, camera controls, and raw data from the camera sensors (on ZED 2, ZED 2i, and ZED Mini). A synchronization mechanism is provided to get the correct sensor data associated with a video frame.
 
 **Note:** While in the ZED SDK all output data is calibrated and compensated, here the extracted raw data is not corrected by the camera and sensor calibration parameters. You can retrieve camera and sensor calibration data using the [ZED SDK](https://www.stereolabs.com/docs/video/camera-calibration/) to correct your camera data [see `zed_open_capture_rectify_example` example].
 
@@ -63,17 +65,17 @@ to correctly execute the example application it is necessary to change the defau
 export MESA_GL_VERSION_OVERRIDE=3.2
 ```
 
-you can permanently add this configuration by adding the above command as last line of the `~/.bashrc` file.
+you can permanently add this configuration by adding the above command as the last line of the `~/.bashrc` file.
 
 ## Build
 
 ### Prerequisites
 
- * Stereo camera: [ZED 2](https://www.stereolabs.com/zed-2/), [ZED](https://www.stereolabs.com/zed/), [ZED Mini](https://www.stereolabs.com/zed-mini/)
+ * Stereo camera: [ZED 2i](https://www.stereolabs.com/zed-2i/), [ZED 2](https://www.stereolabs.com/zed-2/), [ZED](https://www.stereolabs.com/zed/), [ZED Mini](https://www.stereolabs.com/zed-mini/)
  * Linux OS
  * GCC (v7.5+)
  * CMake (v3.1+)
- * OpenCV (v3.4.0+) -Optional for the examples-
+ * OpenCV (v3.4.0+) -Optional for the examples- 
 
 ### Install prerequisites
 
@@ -154,7 +156,7 @@ Include the `videocapture.hpp` header, declare a `VideoCapture` object and retri
     
 ### Get sensors data
 
-Include the `SensorCapture` header, declare a `SensorCapture` object, get a list of available devices, initialize the first one and finally retrieve sensors data:
+Include the `SensorCapture` header, declare a `SensorCapture` object, get a list of available devices, initialize the first one, and finally retrieve sensors data:
 
     #include "sensorcapture.hpp"
     sl_oc::sensors::SensorCapture sens;
@@ -169,18 +171,20 @@ Include the `SensorCapture` header, declare a `SensorCapture` object, get a list
 
 After installing the library and examples, you will have the following sample applications in your `build` directory:
 
-* [zed_open_capture_video_example](https://github.com/stereolabs/zed-open-capture/blob/fix_doc/examples/zed_oc_video_example.cpp): This application captures and displays video frames from the camera.
-* [zed_open_capture_control_example](https://github.com/stereolabs/zed-open-capture/blob/fix_doc/examples/zed_oc_control_example.cpp): This application captures and displays video frames from the camera and provides runtime control of camera parameters using keyboard shortcuts.
-* [zed_open_capture_rectify_example](https://github.com/stereolabs/zed-open-capture/blob/fix_doc/examples/zed_oc_rectify_example.cpp): This application downloads factory stereo calibration parameters from Stereolabs server, performs stereo image rectification and displays original and rectified frames.
-* [zed_open_capture_sensors_example](https://github.com/stereolabs/zed-open-capture/blob/fix_doc/examples/zed_oc_sensors_example.cpp): This application creates a `SensorCapture` object and displays on the command console the values of camera sensors acquired at full rate.
-* [zed_open_capture_sync_example](https://github.com/stereolabs/zed-open-capture/blob/fix_doc/examples/zed_oc_sync_example.cpp): This application creates a `VideoCapture` and a `SensorCapture` object, initialize the camera/sensors synchronization and displays on screen the video stream with the synchronized IMU data.
-* [zed_open_capture_depth_example](https://github.com/stereolabs/zed-open-capture/blob/fix_doc/examples/zed_oc_depth_example.cpp): This application captures and displays video frames, calculates disparity map, then extracts the depth map and the point cloud displaying the result and the performances estimation.
-* [zed_open_capture_depth_tune_stereo](https://github.com/stereolabs/zed-open-capture/blob/fix_doc/examples/tools/zed_oc_tune_stereo_sgbm.cpp): This application captures the first available stereo frames and provides GUI Controls to tune the disparity map results and save them to be used in the `zed_open_capture_depth_example` example
+* [zed_open_capture_video_example](https://github.com/stereolabs/zed-open-capture/blob/master/examples/zed_oc_video_example.cpp): This application captures and displays video frames from the camera.
+* [zed_open_capture_multicam_video_example](https://github.com/stereolabs/zed-open-capture/blob/master/examples/zed_oc_multi_video_example.cpp): This application captures and displays video frames from two cameras.
+* [zed_open_capture_control_example](https://github.com/stereolabs/zed-open-capture/blob/master/examples/zed_oc_control_example.cpp): This application captures and displays video frames from the camera and provides runtime control of camera parameters using keyboard shortcuts.
+* [zed_open_capture_rectify_example](https://github.com/stereolabs/zed-open-capture/blob/master/examples/zed_oc_rectify_example.cpp): This application downloads factory stereo calibration parameters from Stereolabs server, performs stereo image rectification and displays original and rectified frames.
+* [zed_open_capture_sensors_example](https://github.com/stereolabs/zed-open-capture/blob/master/examples/zed_oc_sensors_example.cpp): This application creates a `SensorCapture` object and displays on the command console the values of camera sensors acquired at full rate.
+* [zed_open_capture_sync_example](https://github.com/stereolabs/zed-open-capture/blob/master/examples/zed_oc_sync_example.cpp): This application creates a `VideoCapture` and a `SensorCapture` object, initialize the camera/sensors synchronization and displays on screen the video stream with the synchronized IMU data.
+* [zed_open_capture_depth_example](https://github.com/stereolabs/zed-open-capture/blob/master/examples/zed_oc_depth_example.cpp): This application captures and displays video frames, calculates disparity map, then extracts the depth map and the point cloud displaying the result and the estimation of the performance.
+* [zed_open_capture_depth_tune_stereo](https://github.com/stereolabs/zed-open-capture/blob/master/examples/tools/zed_oc_tune_stereo_sgbm.cpp): This application captures the first available stereo frames and provides GUI Controls to tune the disparity map results and save them to be used in the `zed_open_capture_depth_example` example
 
 To run the examples, open a terminal console and enter the following commands:
 
 ```
 $ zed_open_capture_video_example
+$ zed_open_capture_multicam_video_example
 $ zed_open_capture_control_example
 $ zed_open_capture_rectify_example
 $ zed_open_capture_sensors_example
@@ -207,14 +211,14 @@ You can also generate the documentation locally in HTML format (with Doxygen) us
 
 ## Coordinates system
 
-The coordinate system is only used for sensors data. The given IMU and Magnetometer data are expressed in the RAW coordinate system as show below
+The coordinate system is only used for sensor data. The given IMU and Magnetometer data are expressed in the RAW coordinate system as shown below
 
 ![](./images/imu_axis.jpg)
 
 ## Related
 
 - [Stereolabs](https://www.stereolabs.com)
-- [ZED 2 multi-sensor camera](https://www.stereolabs.com/zed-2/)
+- [ZED 2i multi-sensor camera](https://www.stereolabs.com/zed-2i/)
 - [ZED SDK](https://www.stereolabs.com/developers/)
 
 ## License
